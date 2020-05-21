@@ -79,8 +79,6 @@ flowlines<-st_read("D:/GoogleDrive/IDEA_2020/data/nhd_grwl_collapse_20191002.shp
 
 
 
-
-
 ```
 
 
@@ -99,7 +97,7 @@ ggplot(tss_year %>% filter(ID==408)) +
   scale_color_viridis_c() +
   theme_bw()
 
-# WE need more geospatial information for using this data. Lets join it to the flowlines. but drop the actual geometry information for now
+# WE need more geospatial information for using this data. Lets join it to the flowlines. but drop the actual geometry information for now.
 
 tss_year_join <- tss_year %>%
   left_join(flowlines_coast %>%

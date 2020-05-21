@@ -23,7 +23,7 @@ library(rgeos)
 library(lwgeom)
 ###################################################
 
-## read data
+### read data
 flowline <- st_read('D:/GIS/river_networks/nhd_grwl_collapse_20191002.shp') 
 
 
