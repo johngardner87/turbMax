@@ -1,0 +1,171 @@
+---
+title: "practice1"
+author: "John Gardner"
+date: "May 20, 2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+# load packages, probably will not use all these
+library(tidyverse)
+library(feather)
+library(viridis)
+library(sf)
+library(rgdal)
+library(maps)
+library(magrittr)
+library(purrr)
+library(data.table)
+library(tmap)
+library(ggthemes)
+library(dplyr)
+library(ggplot2)
+library(mapview)
+library(fs)
+library(httr)
+library(leaflet)
+library(USAboundaries)
+library(rgeos)
+library(lwgeom)
+
+
+#knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r load_data}
+
+# load data from our google drive, This is the path on my computer. Maybe different wherever you store the data. I recommend using google drive desktop and syncing our IDEA_2020 with your computer
+
+# the data you will be using all comes from these coastal rivers
+flowlines_coast <-st_read("D:/GoogleDrive/IDEA_2020/data/flowline_coastal.gpkg")
+
+
+tss_year <- read_feather("D:/GoogleDrive/IDEA_2020/data/tss_coastal_year.feather")
+
+
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+```{r module_1}
+
+# Module 1: Get familiar with flowlines
+# we can plot this using ggplot and sf while changin the projection to make it look better to 2163
+ggplot() +
+  geom_sf(data=flowlines_coast %>%
+            st_transform(2163), aes(color=as.factor(StrmOrd))) +
+  scale_color_viridis(discrete=T)
+
+# We can also make an interactive plot which will be very useful throughout this summer to reference what is going on in a river when looking at the TSS data. If this is a big spatial file, sometimes it takes a few minutes and will pop up in your web browser instead of in R studio
+mapview(flowlines_coast)
+
+
+# here is the data for all Landsat visible (>60 meters in width) flowlines that we have TSS and remote sensing data from
+flowlines<-st_read("D:/GoogleDrive/IDEA_2020/data/nhd_grwl_collapse_20191002.shp")
+
+
+### CODE Challenge: Plot the full rivers. transfrom the projection to 2163. and color code the rivers by their mean discharge (QE_MA) using the viridis color pallette 
+
+
+
+### CODE Challenge: Make a mapview interactive maop for just the Neuse, Pamlico, and Potomac rivers (Hint: names are GNIS_NA, but use the LvlPthI column to subset whole rivers)
+
+
+
+
+
+```
+
+
+
+
+```{r module_2}
+# Module 2: Get familiar with TSS (total suspended solids) data
+
+# inspect the structure of tss_year
+str(tss_year)
+
+# plot tss over time for 1 reach
+
+ggplot(tss_year %>% filter(ID==408)) +
+  geom_point(aes(x=year, y=tss_mean, color=count_year)) +
+  scale_color_viridis_c() +
+  theme_bw()
+
+# WE need more geospatial information for using this data. Lets join it to the flowlines. but drop the actual geometry information for now
+
+tss_year_join <- tss_year %>%
+  left_join(flowlines_coast %>%
+              st_set_geometry(NULL), by="ID")
+
+
+# now we can subset a river and plot the longitudinal profile of TSS along distance downstream. Here for The Neuse river in NC. This will be the basis of many of yoru analysis, what is the shape of these profiles.
+# Pthlngt is the distance in km from the watershed outlet
+
+ggplot(tss_year_join %>% 
+         filter(LvlPthI==250004217)) +
+  geom_line(aes(x=Pthlngt, y=tss_mean, group=year, color=year)) +
+  scale_color_viridis_c() +
+  scale_x_reverse() +
+  theme_bw() +
+  xlab("Distance from outlet (km)")
+
+
+
+### CODE Challenge: Make a similar plot for the Pamlico and Potomac rivers. try using facet_wrap to plot both at once
+
+
+
+
+### CODE Challenge: load in the monthly tss data.  (tss_coastal_month.feather). join to flowlines and make a plot of tss vs distance downstream for the Neuse, Pamlico and Potomac rivers colored by month
+
+
+
+
+
+
+### CODE Challenge: load in the full dataset (sr_tss_nhd_coast.feather). This already has flowlines joined.  plot of tss vs distance downstream for the Neuse, Pamlico and Potomac rivers with each line representing a separate date (or individual Landsat path). Some rivers may have multiple landsat scenes that cover this stretch of river.
+
+
+
+
+### 
+
+```
+
+
+
+```{r module_5}
+
+# stats in R
+
+# Try making a linear model of tss_mean vs distance downstream for 1 year (say 2016) for the Neuse river
+
+
+# Write a function that does a linear model and extract the model coefficients, pvalue, and R2
+
+
+# Use this linaer model combined with some sort of map function to apply to model to all years on the Neuse River
+
+
+
+```
+
+
+```{r modeul_6}
+
+
+# plotting landsat tiles
+
+```
+
+
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
