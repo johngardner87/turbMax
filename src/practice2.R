@@ -208,7 +208,9 @@ ggplot(tss_year_join %>%
   scale_x_reverse() +
   theme_bw() +
   xlab("Distance from outlet (km)") +
-  ylab("TSS (mg/L") 
+  ylab("TSS (mg/L)") 
+
+ggsave("figs/neuse_tss_year.png", width=6, height=4, units='in', dpi=300)
 
 ### CODE Challenge: Make a similar plot for the Pamlico and Potomac rivers. 
 # try using facet_wrap to plot both at once
@@ -224,6 +226,7 @@ ggplot(tss_year_join %>%
 
 
 
+# save these plots 
 
 
 ### CODE Challenge: load in the monthly tss data.  (tss_coastal_month.feather). 
