@@ -6,12 +6,12 @@
 # Packages contain R functions that will do math for us, so we do not
 # have to write code from scratch
 
-install.packages(c("tidyverse", "feather", "viridis", "sf", "rgdal",
-                   "maps", "magrittr", "purr", "data.table", "tmap",
-                   "ggthemes", "dplyr", "ggplot2", "mapview", "fs",
-                   "httr", "leaflet", "USAboundaries", "rgeos", "lwgeom",
-                   "plyr", "stringr", "lubridate", "ggmap", "ggthemes", "readr",
-                   "nhdplusTools", "Rcpp", "remotes","sp", "foreign" ))
+#install.packages(c("tidyverse", "feather", "viridis", "sf", "rgdal",
+#                   "maps", "magrittr", "purr", "data.table", "tmap",
+#                   "ggthemes", "dplyr", "ggplot2", "mapview", "fs",
+#                   "httr", "leaflet", "USAboundaries", "rgeos", "lwgeom",
+#                   "plyr", "stringr", "lubridate", "ggmap", "ggthemes", "readr",
+ #                  "nhdplusTools", "Rcpp", "remotes","sp", "foreign" ))
 
 # if this doesn't work. Install each package individually. For eaxmaple...
 # and run the code. 
@@ -100,14 +100,16 @@ mapview(flowlines_coast)
 flowlines<-st_read("D:/GoogleDrive/IDEA_2020/data/nhd_grwl_collapse_20191002.shp")
 
 #############################################################
-### CODE Challenge: Plot flowlines using ggplot. 
-### transfrom the projection to 2163. 
+### CODE Challenge: Plot flowlines_coat using ggplot. 
 ### and color code the rivers by their mean discharge (i.e. QE_MA) 
-### using the viridis color pallette 
-## this is almost the same code as above.
+### this is almost the same code as above just with a differnt variable 
+## in the color argument.
 
 ### FINISH THIS CODE
-ggplot(flowlines) 
+ggplot() +
+  geom_sf(data=flowlines_coast %>%
+            st_transform(2163), aes(color=    )) +
+  scale_color_viridis(discrete=F)
 
 
 
@@ -130,31 +132,42 @@ names <- flowlines_coast %>%
 # find the LLook up the LvlPthI associated with the 
 # three river names
 
-# FINSH THIS CODE: to subset three rivers (HINT: insert LvlPthI in the c() ).
+
+# Try subsetting data to see it in the console. And you can look up the 
+# LvlPtID associated with a river name, for example the Potomac River.
+# This is quicker for one river than scrolling through the whole names object
+
+names %>% filter(GNIS_NA =="Potomac River")
+
+
+
+# FINSH THIS CODE: to subset three rivers (HINT: insert LvlPthI associated with each
+# river in the quoatations in the c() ). You will be subsetting three rivers.
 flow_coast_sub <- flowlines_coast %>%
-  filter(LvlPthI %in% c())
+  filter(LvlPthI %in% c("  ", "  ", "  "))
 
 
 
 # FINSH THIS CODE: plot flow_coast_sub using mapview.
-mapview(data=, zcol=)
+mapview(data=)
 
 
 
 # FINSH THIS CODE: Make a scatter plot of each of these three rivers of elevation 
 # (MAXELEVS) vs. distance downstream (Pthlngt). Subset with GNIS_NA or LvlPthI
+
+# example code
 ggplot(flow_coast_sub %>%
           filter(GNIS_NA == "Neuse River")) +
-  geom_point(aes(x=, y=))
+  geom_point(aes(x=Pthlngt, y=MAXELEVS))
+
+# Now make this same plot for the Potomac River
 
 
-
-# WRITE NEW CODE: and make a plot for the next two rivers
-
-
-# FINSIH THIS CODE: to plot all rivers at once using facet_wrap
+# FINSIH THIS CODE:(Hint chose variables for the x and y axis, Pthlngt and MAXELEVS)
+# to plot all rivers at once using facet_wrap
 ggplot(flow_coast_sub)
-  geom_point(aes(x=, y=)) +
+  geom_point(aes(x=     , y=   )) +
     facet_wrap(~LvlPthI, scales="free")
 
 ?facet_wrap()
@@ -213,38 +226,107 @@ ggplot(tss_year_join %>%
 ggsave("figs/neuse_tss_year.png", width=6, height=4, units='in', dpi=300)
 
 ### CODE Challenge: Make a similar plot for the Pamlico and Potomac rivers. 
-# try using facet_wrap to plot both at once
 
+## FINISH THIS CODE: Make the same plot but for the Pamlico River.
+### Hint: type in the LvlPthI associated with the Pamlico River
+
+ggplot(tss_year_join %>% 
+         filter(LvlPthI==        )) +
+  geom_line(aes(x=Pthlngt, y=tss_mean, group=year, color=year)) +
+  scale_color_viridis_c() +
+  scale_x_reverse() +
+  theme_bw() +
+  xlab("Distance from outlet (km)") +
+  ylab("TSS (mg/L)") 
+
+#FINISH CODE: to Save this plot
+ggsave("figs/tss_year_pamlico.png", width=5, height=5, units='in', dpi=300)
+
+
+## FINISH THIS CODE: Make the same plot but for the Potomac River
+ggplot(tss_year_join %>% 
+         filter(LvlPthI==     )) +
+  geom_line(aes(x=Pthlngt, y=tss_mean, group=year, color=year)) +
+  scale_color_viridis_c() +
+  scale_x_reverse() +
+  theme_bw() +
+  xlab("Distance from outlet (km)") +
+  ylab("TSS (mg/L)") 
+
+#FINISH CODE: to Save this plot
+ggsave("figs/tss_year_potomac.png", width=5, height=5, units='in', dpi=300)
 
 
 # Make a new R object subsetting these three rivers
+tss_year_join_sub <- tss_year_join %>%
+  filter(LvlPthI %in% c(250004217, 200004858,250005875 ))
 
 
 
+# Example: Plot all three rivers at once by using facet wrap
+ggplot(tss_year_join_sub) +
+  geom_line(aes(x=Pthlngt, y=tss_mean, group=year, color=year)) +
+  scale_color_viridis_c() +
+  scale_x_reverse() +
+  theme_bw() +
+  xlab("Distance from outlet (km)") +
+  ylab("TSS (mg/L)") +
+  facet_wrap(~LvlPthI, scales="free")
 
-# Make plot for all rivers using facet_wrap
-
-
-
-# save these plots 
+# FINISH THIS CODE: save this plots 
+ggsave("figs/tss_year_3rivers.png", width=8, height=5, units='in', dpi=300)
 
 
 ### CODE Challenge: load in the monthly tss data.  (tss_coastal_month.feather). 
 # join to flowlines and make a plot of tss vs distance downstream for the Neuse, Pamlico 
 # and Potomac rivers colored by month
 
-### FINISH THIS CODE
+### FINISH THIS CODE. type in the file path to tss_cosatal_month.feather
 tss_month <- read_feather()
 
+### FINISH THIS CODE. Join the monthly tss data to the flowlines, (HINT: by="ID)
 
 tss_month_join <- tss_month %>%
-  left_join()
-
-# Subset Neuse, Pamlico, and Potomac rivers
-
+  left_join(flowlines_coast %>%
+              st_set_geometry(NULL), by= "  ")
 
 
-# Plot each river
+#FINISH THIS CODE: Subset Neuse, Pamlico, and Potomac rivers (Type in the LvlPthI)
+tss_month_join_sub <- tss_month_join %>%
+  filter(LvlPthI %in% c(           ))
+
+
+# FINISH THIS CODE. Make a plot for each river where color=month.
+# This is th SAME plot as the tss_year, but group and color = month instead of year.
+
+# Example with Neuse River
+ggplot(tss_month_join_sub %>%
+         filter(LvlPthI == 250004217)) +
+  geom_line(aes(x=Pthlngt, y=tss_mean, group=month, color= month)) +
+  scale_color_viridis_c() +
+  scale_x_reverse() +
+  theme_bw() +
+  xlab("Distance from outlet (km)") +
+  ylab("TSS (mg/L)") 
+
+# FINISH THIS CODE 
+ggplot(tss_month_join_sub %>%
+         filter()) +
+  geom_line(aes(x=Pthlngt, y=tss_mean, group=      , color=       )) +
+  scale_color_viridis_c() +
+  scale_x_reverse() +
+  theme_bw() +
+  xlab("Distance from outlet (km)") +
+  ylab("TSS (mg/L)") 
+
+ggplot(tss_month_join_sub %>%
+         filter()) +
+  geom_line(aes(x=Pthlngt, y=tss_mean, group=      , color=       )) +
+  scale_color_viridis_c() +
+  scale_x_reverse() +
+  theme_bw() +
+  xlab("Distance from outlet (km)") +
+  ylab("TSS (mg/L)") 
 
 
 
@@ -255,14 +337,27 @@ tss_month_join <- tss_month %>%
 # Some rivers may have multiple landsat scenes that cover this stretch of river.
 # and therefore the full river is not plotted for each date.
 
-tss_full <- readRDS()
+tss_full <- readRDS("data/sr_tss_nhd_coast.RData")
 
 
-# Subset Neuse, Pamlico, and Potomac rivers
-
+# FINISH THIS CODE. Subset Neuse, Pamlico, and Potomac rivers by typing in the LvlPthI
+tss_full <- tss_full %>%
+  filter(LvlPthI %in% c(       ))
 
 
 # Plot each river, with the group= and color= as.factor(date)
+
+# Example with Neuse River
+ggplot(tss_full %>%
+         filter(LvlPthI == 250004217)) +
+  geom_line(aes(x=Pthlngt, y=mean, group=as.factor(date), color= as.factor(date))) +
+  scale_color_viridis_c() +
+  scale_x_reverse() +
+  theme_bw() +
+  xlab("Distance from outlet (km)") +
+  ylab("TSS (mg/L)") 
+
+# MAKE THE SAME PLOT for the Pamlico and Potomac Rivers
 
 
 
