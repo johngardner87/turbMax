@@ -52,7 +52,7 @@ unique(Q$site_no)
 # using facet_wrap
 
 ggplot(Q) +
-  geom_line(aes(x= flow_cms , y=  Date   )) +
+  geom_line(aes(x= flow_cms , y=    )) +
   facet_wrap(~Name, scales="free_y")
 
 # Try plotting now by removing the "scales" argument in facet_wrap
@@ -87,7 +87,7 @@ Q_annual <- Q %>%
 ### FINISH THIS CODE. make a line plot of the annual mean discharge
 # for each year for all thre rivers using facet_wrap
 ggplot(Q_annual) +
-  geom_line(aes(x=year  , y= mean ))+
+  geom_line(aes(x= , y= ))+
   facet_wrap(~Name, scales="free")
 
   
@@ -99,17 +99,15 @@ Q_month <- Q %>%
   
 
 
-### FINISH THIS CODE. Join the annual flow data and the flowlines to the
-  # annual tss data for the neuse river
+# Join the annual flow data and the flowlines to the
+# annual tss data for the neuse river
 
 tss_Q_neuse <- tss_year %>%
 # join flowlines_coast
   left_join(flowlines_coast %>%
               st_set_geometry(NULL), by= "ID") %>%
   filter(LvlPthI == 250004217) %>%
-  # you can join columns that have the same data but different column names
-  # by specficying this in the "by" argument. AND you can join by multiple columns
-  # such as year AND river
+  #  you can join by multiple columns such as year AND river
   inner_join(Q_annual, by=c( "LvlPthI", "year"))
 
 ### FINISH THIS CODE. Repeat for the Pamlico and Potomac rivers
